@@ -164,7 +164,7 @@ func (ix *IndexWriter) Add(name string, f io.Reader) {
 			}
 			return
 		}
-		if !ix.NoSkip && linelen++; linelen > maxLineLen {
+		if linelen++; !ix.NoSkip && linelen > maxLineLen {
 			if ix.LogSkip {
 				log.Printf("%s: very long lines, ignoring\n", name)
 			}
