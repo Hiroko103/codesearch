@@ -16,7 +16,7 @@ import (
 	"github.com/Hiroko103/codesearch/index"
 )
 
-var usageMessage = `usage: cindex [-list] [-reset] [path...]
+var usageMessage = `usage: cindex [-noskip] [-list] [-reset] [path...]
 
 Cindex prepares the trigram index for use by csearch.  The index is the
 file named by $CSEARCHINDEX, or else $HOME/.csearchindex.
@@ -41,6 +41,8 @@ itself is a useful command to run in a nightly cron job.
 
 The -list flag causes cindex to list the paths it has indexed and exit.
 
+With the -noskip flag, files that might be binary will also be indexed.
+
 By default cindex adds the named paths to the index but preserves 
 information about other paths that might already be indexed
 (the ones printed by cindex -list).  The -reset flag causes cindex to
@@ -56,6 +58,7 @@ func usage() {
 var (
 	listFlag    = flag.Bool("list", false, "list indexed paths and exit")
 	resetFlag   = flag.Bool("reset", false, "discard existing index")
+	noskipFlag  = flag.Bool("noskip", false, "force indexing of file")
 	verboseFlag = flag.Bool("verbose", false, "print extra information")
 	cpuProfile  = flag.String("cpuprofile", "", "write cpu profile to this file")
 )
@@ -121,7 +124,7 @@ func main() {
 		file += "~"
 	}
 
-	ix := index.Create(file)
+	ix := index.Create(file, *noskipFlag)
 	ix.Verbose = *verboseFlag
 	ix.AddPaths(args)
 	for _, arg := range args {
